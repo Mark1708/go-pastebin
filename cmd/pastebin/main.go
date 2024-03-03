@@ -7,8 +7,17 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/hello", hello)
-	err := http.ListenAndServe(":8080", nil)
+	/*
+	 * ServeMux - это мультиплексор HTTP-запросов. Он сопоставляет URL каждого входящего запроса
+	 * со списком зарегистрированных шаблонов и вызывает обработчик шаблона,
+	 * который наиболее точно соответствует URL. NewServeMux выделяет и возвращает новый ServeMux.
+	 *
+	 * Поскольку ServeMux по умолчанию очень ограничен и не очень производителен
+	 */
+	mux := http.NewServeMux()
+	mux.HandleFunc("/hello", hello)
+
+	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
 		panic(err)
 	}
