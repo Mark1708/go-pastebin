@@ -3,6 +3,10 @@ build: clean  ## Сборка проекта
 	@echo "  >  Building Pastebin binary..."
 	go build -ldflags '-w -s' -a -o ./bin/pastebin ./cmd/pastebin
 
+.PHONY: build_image
+build_image:
+	docker build -f ./build/Dockerfile -t pastebin .
+
 .PHONY: run
 run:  ## Запуск проекта
 	echo "  >  Run Pastebin binary..."
