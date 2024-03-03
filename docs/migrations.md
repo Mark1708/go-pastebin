@@ -3,6 +3,10 @@
 ## Установка Goose
 ```shell
 go install github.com/pressly/goose/v3/cmd/goose@latest
+# или 
+git clone https://github.com/pressly/goose.git
+cd goose
+go build -tags="no_mysql no_sqlite3 no_mssql no_redshift no_tidb no_clickhouse no_vertica no_ydb no_duckdb" -o goose ./cmd/goose
 ```
 ## Правила создания миграций
 Все миграции расположенны в директории `migrations`.
