@@ -4,6 +4,14 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
+)
+
+const (
+	ReadTimeout  = 2 // секунд
+	WriteTimeout = 2 // секунд
+	// IdleTimeout - это максимальное время ожидания следующего запроса при включении функции keep-alives.
+	IdleTimeout = 5 // секунд
 )
 
 func main() {
@@ -17,7 +25,16 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/hello", hello)
 
-	err := http.ListenAndServe(":8080", mux)
+	s := &http.Server{
+		Addr:         ":8080",
+		Handler:      mux,
+		ReadTimeout:  ReadTimeout * time.Second,
+		WriteTimeout: WriteTimeout * time.Second,
+		IdleTimeout:  IdleTimeout * time.Second,
+	}
+
+	// Сервер определяет параметры для запуска HTTP-сервера.
+	err := s.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}
