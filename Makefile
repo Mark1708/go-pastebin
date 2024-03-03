@@ -1,5 +1,3 @@
-PROJECTNAME=$(shell basename "$(PWD)")
-
 # Сборка проекта
 build:
 	@echo "  >  Building Pastebin binary..."
@@ -13,10 +11,10 @@ run:
 # Сборка и запуск проекта
 all: build run
 
-# Список пакетов
-list:
-	@echo "  >  List of packages:"
-	go list ./...
+# Очистка несипользуемых модулей
+tidy:
+	@echo "  >  Cleaning not used modules..."
+	go mod tidy
 
 # Список пакетов
 list:
