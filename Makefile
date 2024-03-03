@@ -1,27 +1,41 @@
-# Сборка проекта
-build:
+.PHONY: build
+build: clean  ## Сборка проекта
 	@echo "  >  Building Pastebin binary..."
 	go build -ldflags '-w -s' -a -o ./bin/pastebin ./cmd/pastebin
 
-# Запуск проекта
-run:
-	@echo "  >  Run Pastebin binary..."
+.PHONY: run
+run:  ## Запуск проекта
+	echo "  >  Run Pastebin binary..."
 	./bin/pastebin
 
-# Сборка и запуск проекта
-all: build run
+.PHONY: build_run
+build_run: build run  ## Сборка и запуск проекта
 
-# Очистка несипользуемых модулей
-tidy:
-	@echo "  >  Cleaning not used modules..."
-	go mod tidy
+.PHONY: clean
+clean:
+	@echo "  >  Cleaning project..."
+	go clean
+	./bin/pastebin
 
-# Список пакетов
-list:
+.PHONY: tidy
+tidy:  ## Форматирование и чистка несипользуемых модулей
+	@echo "  >  Formatting and cleaning not used modules..."
+	go fmt ./...
+	go mod tidy -v
+
+.PHONY: list
+list:  ## Список пакетов
 	@echo "  >  List of packages:"
 	go list ./...
 
-# Запск линтера
-lint:
+.PHONY: lint
+lint:  ## Запуск линтера
 	@echo "  >  Run Linter..."
 	golangci-lint run ./...
+
+.PHONY: all
+all: help
+
+.PHONY: help
+help:  Makefile ## Помощь
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
