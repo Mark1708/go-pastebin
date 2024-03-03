@@ -1,9 +1,29 @@
-FROM golang:alpine
+# Build environment
+# -----------------
+FROM golang:1.22-alpine AS builder
 
-WORKDIR /pastebin
-COPY . .
+LABEL stage=gobuilder
 
+ENV CGO_ENABLED 0
+
+RUN apk update --no-cache gcc musl-dev && apk add --no-cache tzdata
+
+WORKDIR /build
+
+ADD go.mod .
+ADD go.sum .
+RUN go mod download
+COPY ../ .
 RUN go build -ldflags '-w -s' -a -o ./bin/pastebin ./cmd/pastebin
 
-CMD ["/pastebin/bin/pastebin"]
+# Deployment environment
+# ----------------------
+FROM scratch
+
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+
+WORKDIR /app
+COPY --from=builder /build/bin/pastebin /app/bin/pastebin
+
+CMD ["/app/bin/pastebin"]
 EXPOSE 8080
