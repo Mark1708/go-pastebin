@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"log"
 	"net/http"
@@ -33,10 +34,10 @@ func main() {
 		IdleTimeout:  IdleTimeout * time.Second,
 	}
 
+	log.Println("Starting server :8080")
 	// Сервер определяет параметры для запуска HTTP-сервера.
-	err := s.ListenAndServe()
-	if err != nil {
-		panic(err)
+	if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.Fatal("Server startup failed")
 	}
 }
 
