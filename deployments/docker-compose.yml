@@ -5,17 +5,33 @@ services:
   pastebin:
     container_name: pastebin
     image: pastebin:latest
+    environment:
+      SERVER_PORT: ${SERVER_PORT}
+      SERVER_TIMEOUT_READ: ${SERVER_TIMEOUT_READ}
+      SERVER_TIMEOUT_WRITE: ${SERVER_TIMEOUT_WRITE}
+      SERVER_TIMEOUT_IDLE: ${SERVER_TIMEOUT_IDLE}
+      SERVER_DEBUG: ${SERVER_DEBUG}
+
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+
+      GOOSE_DRIVER: postgres
+      GOOSE_DBSTRING: postgresql://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable
     ports:
       - "8080:8080"
     depends_on:
       - db
+    command: ["sh", "-c", "/app/goose -dir /app/migrations up && /app/pastebin"]
 
   db:
     image: postgres:alpine
     environment:
-      - POSTGRES_DB=pastebin_db
-      - POSTGRES_USER=pb_user
-      - POSTGRES_PASSWORD=pb_pass
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
     ports:
       - "5432:5432"
     restart: always

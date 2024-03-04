@@ -18,12 +18,14 @@ RUN go build -ldflags '-w -s' -a -o ./bin/pastebin ./cmd/pastebin
 
 # Deployment environment
 # ----------------------
-FROM scratch
+FROM alpine
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
 WORKDIR /app
-COPY --from=builder /build/bin/pastebin /app/bin/pastebin
+COPY --from=builder /build/bin/pastebin /app/pastebin
+COPY --from=builder /build/bin/goose /app/goose
+COPY --from=builder /build/migrations /app/migrations
 
-CMD ["/app/bin/pastebin"]
+CMD ["/app/pastebin"]
 EXPOSE 8080

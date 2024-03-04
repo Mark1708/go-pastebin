@@ -2,20 +2,18 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"time"
-)
 
-const (
-	ReadTimeout  = 2 // секунд
-	WriteTimeout = 2 // секунд
-	// IdleTimeout - это максимальное время ожидания следующего запроса при включении функции keep-alives.
-	IdleTimeout = 5 // секунд
+	"github.com/Mark1708/go-pastebin/internal/config"
 )
 
 func main() {
+	// Парсим конфигурацию
+	c := config.New()
+
 	/*
 	 * ServeMux - это мультиплексор HTTP-запросов. Он сопоставляет URL каждого входящего запроса
 	 * со списком зарегистрированных шаблонов и вызывает обработчик шаблона,
@@ -27,14 +25,14 @@ func main() {
 	mux.HandleFunc("/hello", hello)
 
 	s := &http.Server{
-		Addr:         ":8080",
+		Addr:         fmt.Sprintf(":%d", c.Server.Port),
 		Handler:      mux,
-		ReadTimeout:  ReadTimeout * time.Second,
-		WriteTimeout: WriteTimeout * time.Second,
-		IdleTimeout:  IdleTimeout * time.Second,
+		ReadTimeout:  c.Server.TimeoutRead,
+		WriteTimeout: c.Server.TimeoutWrite,
+		IdleTimeout:  c.Server.TimeoutIdle,
 	}
 
-	log.Println("Starting server :8080")
+	log.Println("Starting server " + s.Addr)
 	// Сервер определяет параметры для запуска HTTP-сервера.
 	if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal("Server startup failed")
