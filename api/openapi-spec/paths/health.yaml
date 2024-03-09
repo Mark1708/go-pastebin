@@ -1,0 +1,8 @@
+get:
+  tags:
+    - Health API
+  summary: Check health
+  description: Endpoint for checking health
+  responses:
+    '200':
+      $ref: '../responses/ok-response.yaml'

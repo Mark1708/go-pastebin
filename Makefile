@@ -40,7 +40,7 @@ lint:  ## Запуск линтера
 .PHONY: swagger-doc
 swagger-doc:  ## Запуск генератора спецификации OpenAPI
 	@echo "  >  Generating OpenAPI specification..."
-	swag init -g cmd/pastebin/main.go -o ./api/openapi-spec -ot yaml
+	swagger-cli bundle api/openapi-spec/openapi.yaml --outfile api/openapi-spec/build/openapi.json --type json
 
 .PHONY: all
 all: help

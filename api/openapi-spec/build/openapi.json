@@ -1,0 +1,366 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Pastebin API",
+    "version": "1.0",
+    "description": "This is Pastebin example with Golang",
+    "contact": {
+      "email": "mark1708.work@gmail.com",
+      "name": "Mark",
+      "url": "https://github.com/Mark1708"
+    },
+    "license": {
+      "name": "MIT License",
+      "url": "LICENSE"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api/v1",
+      "description": "Local Pastebin server"
+    },
+    {
+      "url": "http://{host}:{port}/api/v1",
+      "description": "Dynamic host and port server",
+      "variables": {
+        "host": {
+          "enum": [
+            "localhost",
+            "dev-api.pastebin.com"
+          ],
+          "default": "localhost"
+        },
+        "port": {
+          "enum": [
+            "8080",
+            "80",
+            "443"
+          ],
+          "default": "8080"
+        }
+      }
+    },
+    {
+      "url": "{baseUrl}/api/v1",
+      "description": "Dynamic base url server",
+      "variables": {
+        "baseUrl": {
+          "enum": [
+            "http://localhost:8080",
+            "https://dev-api.pastebin.com"
+          ],
+          "default": "http://localhost:8080"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Health API"
+        ],
+        "summary": "Check health",
+        "description": "Endpoint for checking health",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/pastes": {
+      "post": {
+        "tags": [
+          "Pastes API"
+        ],
+        "summary": "Create paste",
+        "description": "Create paste",
+        "parameters": [
+          {
+            "description": "Create Paste DTO",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDTO"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/PasteResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/paste": {
+      "get": {
+        "tags": [
+          "Pastes API"
+        ],
+        "summary": "Get paste",
+        "description": "Get paste by ID",
+        "parameters": [
+          {
+            "description": "Paste ID",
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PasteResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Pastes API"
+        ],
+        "summary": "Update paste",
+        "description": "Update paste",
+        "parameters": [
+          {
+            "description": "Paste ID",
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "description": "Update Paste DTO",
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PasteResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Pastes API"
+        ],
+        "summary": "Delete paste",
+        "description": "Delete paste",
+        "parameters": [
+          {
+            "description": "Paste ID",
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/paths/~1health/get/responses/200"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequestError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RequestDTO": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "example": "Some Title",
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "visibility": {
+            "default": "PUBLIC",
+            "type": "string",
+            "enum": [
+              "PUBLIC",
+              "PRIVATE",
+              "UNLISTED"
+            ]
+          },
+          "content": {
+            "example": "Some Content",
+            "maxLength": 2048,
+            "type": "string"
+          },
+          "expires": {
+            "example": "2024-01-02T15:04:05.999Z03:00",
+            "type": "string"
+          }
+        },
+        "required": [
+          "content",
+          "title"
+        ]
+      },
+      "ResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+          },
+          "title": {
+            "type": "string"
+          },
+          "user": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "object",
+            "properties": {
+              "visibility": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "Errors": {
+        "type": "object",
+        "properties": {
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        }
+      }
+    },
+    "responses": {
+      "PasteResponse": {
+        "description": "OK",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseDTO"
+            }
+          }
+        }
+      },
+      "BadRequestError": {
+        "description": "Bad Request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Error"
+                },
+                {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Not Found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Error"
+                },
+                {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/Error"
+                },
+                {
+                  "$ref": "#/components/schemas/Errors"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

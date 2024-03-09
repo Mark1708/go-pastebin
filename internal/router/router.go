@@ -9,7 +9,7 @@ import (
 func New() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Get("/api/health", health.Read)
+	r.Get("/api/v1/health", health.Read)
 
 	r.Route("/api/v1", func(r chi.Router) {
 		pasteAPI := &paste.API{}

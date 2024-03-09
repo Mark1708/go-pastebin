@@ -11,20 +11,6 @@ import (
 	"github.com/Mark1708/go-pastebin/internal/config"
 )
 
-//  @title          Pastebin API
-//  @version        1.0
-//  @description    This is Pastebin example with Golang
-
-//  @contact.name   Mark
-//  @contact.url    https://github.com/Mark1708
-// 	@contact.email  mark1708.work@gmail.com
-
-//  @license.name   MIT License
-//  @license.url    LICENSE
-
-// @host       localhost:8080
-// @basePath   /api
-// @schemes	   http https
 func main() {
 	// Парсим конфигурацию
 	c := config.New()

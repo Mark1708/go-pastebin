@@ -1,0 +1,6 @@
+type: object
+properties:
+  errors:
+    items:
+      type: string
+    type: array

@@ -1,0 +1,8 @@
+PasteResponse:
+  $ref: './paste/ok-response.yaml'
+BadRequestError:
+  $ref: '../responses/bad-request-response.yaml'
+NotFoundError:
+  $ref: '../responses/not-found-response.yaml'
+InternalServerError:
+  $ref: '../responses/server-error-response.yaml'

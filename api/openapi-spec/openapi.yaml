@@ -1,0 +1,52 @@
+openapi: "3.0.2"
+info:
+  title: Pastebin API
+  version: "1.0"
+  description: This is Pastebin example with Golang
+  contact:
+    email: mark1708.work@gmail.com
+    name: Mark
+    url: https://github.com/Mark1708
+  license:
+    name: MIT License
+    url: LICENSE
+servers:
+  - url: 'http://localhost:8080/api/v1'
+    description: Local Pastebin server
+  - url: 'http://{host}:{port}/api/v1'
+    description: Dynamic host and port server
+    variables:
+      host:
+        enum:
+          - localhost
+          - dev-api.pastebin.com
+        default: localhost
+      port:
+        enum:
+          - '8080'
+          - '80'
+          - '443'
+        default: '8080'
+  - url: '{baseUrl}/api/v1'
+    description: Dynamic base url server
+    variables:
+      baseUrl:
+        enum:
+          - http://localhost:8080
+          - https://dev-api.pastebin.com
+        default: http://localhost:8080
+paths:
+  /health:
+    $ref: "./paths/health.yaml"
+  /pastes:
+    $ref: "./paths/pastes.yaml"
+  /paste:
+    $ref: "./paths/paste.yaml"
+
+components:
+  parameters:
+    $ref: "./parameters/_index.yaml"
+  schemas:
+    $ref: "./schemas/_index.yaml"
+  responses:
+    $ref: "./responses/_index.yaml"

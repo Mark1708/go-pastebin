@@ -35,3 +35,13 @@ services:
     ports:
       - "5432:5432"
     restart: always
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: swagger-ui
+    ports:
+      - "8001:8080"
+    volumes:
+      - ../api/openapi.md-spec/build/:/usr/share/nginx/html/api
+    environment:
+      URLS: "[{ url: \"./api/openapi.md.json\", name: \"Pastebin\" },]"
