@@ -37,6 +37,11 @@ lint:  ## Запуск линтера
 	@echo "  >  Run Linter..."
 	golangci-lint run ./...
 
+.PHONY: swagger-doc
+swagger-doc:  ## Запуск генератора спецификации OpenAPI
+	@echo "  >  Generating OpenAPI specification..."
+	swag init -g cmd/pastebin/main.go -o ./api/openapi-spec -ot yaml
+
 .PHONY: all
 all: help
 

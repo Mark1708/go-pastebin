@@ -3,30 +3,38 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
+
+	"github.com/Mark1708/go-pastebin/internal/router"
 
 	"github.com/Mark1708/go-pastebin/internal/config"
 )
 
+//  @title          Pastebin API
+//  @version        1.0
+//  @description    This is Pastebin example with Golang
+
+//  @contact.name   Mark
+//  @contact.url    https://github.com/Mark1708
+// 	@contact.email  mark1708.work@gmail.com
+
+//  @license.name   MIT License
+//  @license.url    LICENSE
+
+// @host       localhost:8080
+// @basePath   /api
+// @schemes	   http https
 func main() {
 	// Парсим конфигурацию
 	c := config.New()
 
-	/*
-	 * ServeMux - это мультиплексор HTTP-запросов. Он сопоставляет URL каждого входящего запроса
-	 * со списком зарегистрированных шаблонов и вызывает обработчик шаблона,
-	 * который наиболее точно соответствует URL. NewServeMux выделяет и возвращает новый ServeMux.
-	 *
-	 * Поскольку ServeMux по умолчанию очень ограничен и не очень производителен
-	 */
-	mux := http.NewServeMux()
-	mux.HandleFunc("/hello", hello)
+	// Инициализируем роутер
+	r := router.New()
 
 	s := &http.Server{
 		Addr:         fmt.Sprintf(":%d", c.Server.Port),
-		Handler:      mux,
+		Handler:      r,
 		ReadTimeout:  c.Server.TimeoutRead,
 		WriteTimeout: c.Server.TimeoutWrite,
 		IdleTimeout:  c.Server.TimeoutIdle,
@@ -37,12 +45,4 @@ func main() {
 	if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal("Server startup failed")
 	}
-}
-
-func hello(w http.ResponseWriter, req *http.Request) {
-	_, err := io.WriteString(w, "Hello, world!")
-	if err != nil {
-		panic(err)
-	}
-	log.Printf("Host: %s", req.Host)
 }
