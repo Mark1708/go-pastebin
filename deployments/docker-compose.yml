@@ -4,7 +4,10 @@ services:
 
   pastebin:
     container_name: pastebin
-    image: pastebin:latest
+#    image: pastebin:latest
+    build:
+      context: ../
+      dockerfile: ./build/Dockerfile
     environment:
       SERVER_PORT: ${SERVER_PORT}
       SERVER_TIMEOUT_READ: ${SERVER_TIMEOUT_READ}
@@ -23,7 +26,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     command: ["sh", "-c", "/app/goose -dir /app/migrations up && /app/pastebin"]
 
   db:
@@ -34,6 +38,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DB_USER} -d ${DB_NAME}'"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
     restart: always
 
   swagger-ui:
