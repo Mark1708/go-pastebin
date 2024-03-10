@@ -21,8 +21,8 @@ up:  ## Запуск проекта в Docker
 stop:  ## Остановить проекта в Docker
 	echo "  >  Stop project in Docker..."
 	docker compose -f ./deployments/docker-compose.yml stop
-	docker rmi pastebin 2> /dev/null
-	docker rmi deployments-pastebin 2> /dev/null
+	[ docker rm pastebin 2> /dev/null ] && echo "Delete pastebin container" || echo "Skip deleting pastebin container"
+	[ docker rmi pastebin 2> /dev/null ] && echo "Delete pastebin image" || echo "Skip deleting pastebin image"
 
 .PHONY: build_run
 build_run: build run  ## Сборка и запуск проекта
