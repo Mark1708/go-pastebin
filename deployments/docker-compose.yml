@@ -53,4 +53,4 @@ services:
     volumes:
       - ../api/openapi.md-spec/build/:/usr/share/nginx/html/api
     environment:
-      URLS: "[{ url: \"./api/openapi.md.json\", name: \"Pastebin\" },]"
+      URLS: "[{ url: \"http://localhost:8080/api/v1/swagger/openapi.json\", name: \"Pastebin\" },]"

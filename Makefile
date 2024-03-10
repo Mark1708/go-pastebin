@@ -21,7 +21,8 @@ up:  ## Запуск проекта в Docker
 stop:  ## Остановить проекта в Docker
 	echo "  >  Stop project in Docker..."
 	docker compose -f ./deployments/docker-compose.yml stop
-	docker rm pastebin
+	docker rmi pastebin 2> /dev/null
+	docker rmi deployments-pastebin 2> /dev/null
 
 .PHONY: build_run
 build_run: build run  ## Сборка и запуск проекта
@@ -47,6 +48,11 @@ list:  ## Список пакетов
 lint:  ## Запуск линтера
 	@echo "  >  Run Linter..."
 	golangci-lint run ./...
+
+.PHONY: lint-fix
+lint-fix:  ## Запуск линтера с исправлением
+	@echo "  >  Run Linter with fix..."
+	golangci-lint run ./... --fix
 
 .PHONY: swagger-doc
 swagger-doc:  ## Запуск генератора спецификации OpenAPI

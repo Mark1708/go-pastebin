@@ -1,5 +1,9 @@
 package health
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func Read(w http.ResponseWriter, r *http.Request) {}
+func Check(w http.ResponseWriter, _ *http.Request) {
+	_, _ = w.Write([]byte("Ok"))
+}
