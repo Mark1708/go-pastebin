@@ -12,6 +12,17 @@ run:  ## Запуск проекта
 	echo "  >  Run Pastebin binary..."
 	./bin/pastebin
 
+.PHONY: up
+up:  ## Запуск проекта в Docker
+	echo "  >  Up project in Docker..."
+	docker compose -f ./deployments/docker-compose.yml up -d
+
+.PHONY: stop
+stop:  ## Остановить проекта в Docker
+	echo "  >  Stop project in Docker..."
+	docker compose -f ./deployments/docker-compose.yml stop
+	docker rm pastebin
+
 .PHONY: build_run
 build_run: build run  ## Сборка и запуск проекта
 
@@ -19,7 +30,7 @@ build_run: build run  ## Сборка и запуск проекта
 clean:
 	@echo "  >  Cleaning project..."
 	go clean
-	./bin/pastebin
+	rm ./bin/pastebin
 
 .PHONY: tidy
 tidy:  ## Форматирование и чистка несипользуемых модулей
