@@ -31,6 +31,7 @@ services:
     command: ["sh", "-c", "/app/goose -dir /app/migrations up && /app/pastebin"]
 
   db:
+    container_name: db
     image: postgres:alpine
     environment:
       POSTGRES_DB: ${DB_NAME}
