@@ -1,15 +1,21 @@
 package router
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/Mark1708/go-pastebin/internal/paste/handler"
+	"github.com/Mark1708/go-pastebin/internal/paste/repository"
+	"github.com/Mark1708/go-pastebin/internal/paste/service"
+
+	"github.com/jmoiron/sqlx"
+
 	"github.com/Mark1708/go-pastebin/internal/config"
 
-	"github.com/Mark1708/go-pastebin/internal/health"
-	"github.com/Mark1708/go-pastebin/internal/paste"
+	"github.com/Mark1708/go-pastebin/internal/healthcheck"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 )
@@ -29,14 +35,29 @@ func New() *chi.Mux {
 		MaxAge:           config.CorsMaxAge,
 	}))
 
-	r.Get(config.BasePath+"/health", health.Check)
+	// Создаём подключение
+	db, err := sqlx.Connect(
+		"pgx",
+		"postgresql://pb_user:pb_pass@db:5432/pastebin_db?sslmode=disable",
+	)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	r.Get(config.BasePath+"/healthcheck", healthcheck.Check)
 
 	r.Route(config.BasePath, func(r chi.Router) {
-		pasteAPI := &paste.API{}
-		r.Get("/pastes/{id}", pasteAPI.Get)
-		r.Post("/pastes", pasteAPI.Create)
-		r.Put("/pastes/{id}", pasteAPI.Update)
-		r.Delete("/pastes/{id}", pasteAPI.Delete)
+		r.Route("/pastes", func(r chi.Router) {
+			pasteRepo := &repository.Repository{DB: db}
+			pasteService := &service.Service{Repo: *pasteRepo}
+			pasteAPI := &handler.API{Service: pasteService}
+			r.Post("/", pasteAPI.Create)
+			r.Route("/{hash}", func(r chi.Router) {
+				r.Get("/", pasteAPI.Get)
+				r.Put("/", pasteAPI.Update)
+				r.Delete("/", pasteAPI.Delete)
+			})
+		})
 	})
 
 	workDir, _ := os.Getwd()

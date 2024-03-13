@@ -1,4 +1,4 @@
 type: object
 properties:
-  error:
+  message:
     type: string

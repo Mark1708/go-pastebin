@@ -40,8 +40,6 @@ paths:
     $ref: "./paths/health.yaml"
   /pastes:
     $ref: "./paths/pastes.yaml"
-  /paste:
-    $ref: "./paths/paste.yaml"
 
 components:
   parameters:

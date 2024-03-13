@@ -8,13 +8,13 @@ properties:
   visibility:
     default: PUBLIC
     type: string
-    enum: [PUBLIC, PRIVATE, UNLISTED]
+    enum: [ PUBLIC, PRIVATE, UNLISTED ]
   content:
     example: Some Content
     maxLength: 2048
     type: string
   expires:
-    example: 2024-01-02T15:04:05.999Z03:00
+    example: string
     type: string
 required:
   - content

@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	_ "github.com/jackc/pgx/v5/stdlib"
+
 	"github.com/Mark1708/go-pastebin/internal/router"
 
 	"github.com/Mark1708/go-pastebin/internal/config"

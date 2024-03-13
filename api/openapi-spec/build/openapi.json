@@ -64,35 +64,35 @@
         "description": "Endpoint for checking health",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OperationResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
           }
         }
       }
     },
     "/pastes": {
-      "post": {
+      "get": {
         "tags": [
           "Pastes API"
         ],
-        "summary": "Create paste",
-        "description": "Create paste",
+        "summary": "Get paste",
+        "description": "Get paste by ID",
         "parameters": [
           {
-            "description": "Create Paste DTO",
-            "in": "body",
-            "name": "body",
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RequestDTO"
-                }
-              }
-            }
+            "$ref": "#/components/parameters/PasteId"
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "$ref": "#/components/responses/PasteResponse"
           },
           "400": {
@@ -105,25 +105,25 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         }
-      }
-    },
-    "/paste": {
-      "get": {
+      },
+      "post": {
         "tags": [
           "Pastes API"
         ],
-        "summary": "Get paste",
-        "description": "Get paste by ID",
-        "parameters": [
-          {
-            "description": "Paste ID",
-            "in": "path",
-            "name": "id",
-            "required": true
+        "summary": "Create paste",
+        "description": "Create paste",
+        "requestBody": {
+          "description": "Create Paste DTO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDTO"
+              }
+            }
           }
-        ],
+        },
         "responses": {
-          "200": {
+          "201": {
             "$ref": "#/components/responses/PasteResponse"
           },
           "400": {
@@ -145,21 +145,19 @@
         "description": "Update paste",
         "parameters": [
           {
-            "description": "Paste ID",
-            "in": "path",
-            "name": "id",
-            "required": true
-          },
-          {
-            "description": "Update Paste DTO",
-            "in": "body",
-            "name": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/RequestDTO"
-            }
+            "$ref": "#/components/parameters/PasteId"
           }
         ],
+        "requestBody": {
+          "description": "Update Paste DTO",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDTO"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "$ref": "#/components/responses/PasteResponse"
@@ -183,10 +181,7 @@
         "description": "Delete paste",
         "parameters": [
           {
-            "description": "Paste ID",
-            "in": "path",
-            "name": "id",
-            "required": true
+            "$ref": "#/components/parameters/PasteId"
           }
         ],
         "responses": {
@@ -207,6 +202,17 @@
     }
   },
   "components": {
+    "parameters": {
+      "PasteId": {
+        "name": "hash",
+        "in": "path",
+        "description": "Paste Hash",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
     "schemas": {
       "RequestDTO": {
         "type": "object",
@@ -232,7 +238,7 @@
             "type": "string"
           },
           "expires": {
-            "example": "2024-01-02T15:04:05.999Z03:00",
+            "example": "string",
             "type": "string"
           }
         },
@@ -246,19 +252,15 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid",
-            "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+            "example": "Sw4zOAOE"
           },
           "title": {
-            "type": "string"
-          },
-          "user": {
             "type": "string"
           },
           "visibility": {
             "type": "object",
             "properties": {
-              "visibility": {
+              "type": {
                 "type": "string"
               },
               "title": {
@@ -279,22 +281,25 @@
           }
         }
       },
-      "Error": {
+      "ErrResponseDto": {
         "type": "object",
         "properties": {
+          "status": {
+            "type": "string"
+          },
+          "code": {
+            "type": "integer"
+          },
           "error": {
             "type": "string"
           }
         }
       },
-      "Errors": {
+      "OperationResponseDto": {
         "type": "object",
         "properties": {
-          "errors": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
+          "message": {
+            "type": "string"
           }
         }
       }
@@ -315,14 +320,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/Error"
-                },
-                {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              ]
+              "$ref": "#/components/schemas/ErrResponseDto"
             }
           }
         }
@@ -332,14 +330,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/Error"
-                },
-                {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              ]
+              "$ref": "#/components/schemas/ErrResponseDto"
             }
           }
         }
@@ -349,14 +340,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/Error"
-                },
-                {
-                  "$ref": "#/components/schemas/Errors"
-                }
-              ]
+              "$ref": "#/components/schemas/ErrResponseDto"
             }
           }
         }

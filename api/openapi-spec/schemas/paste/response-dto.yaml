@@ -2,16 +2,13 @@ type: object
 properties:
   id:
     type: string
-    format: uuid
-    example: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+    example: 'Sw4zOAOE'
   title:
-    type: string
-  user:
     type: string
   visibility:
     type: object
     properties:
-      visibility:
+      type:
         type: string
       title:
         type: string

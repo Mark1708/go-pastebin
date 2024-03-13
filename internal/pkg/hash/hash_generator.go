@@ -1,7 +1,7 @@
 package hash
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	b64 "encoding/base64"
 	"io"
 	"net/http"
@@ -9,9 +9,7 @@ import (
 	"time"
 )
 
-func GenerateHash(r *http.Request) string {
-	ip := getUserIP(r)
-
+func GenerateHash(ip string) string {
 	md5HashBytes := generateMd5Hash(ip)
 	base64Str := b64.StdEncoding.EncodeToString(md5HashBytes)
 
@@ -19,19 +17,19 @@ func GenerateHash(r *http.Request) string {
 }
 
 func generateMd5Hash(ip string) []byte {
-	md5Hash := md5.New()
-	_, _ = io.WriteString(md5Hash, ip)
-	_, _ = io.WriteString(md5Hash, strconv.FormatInt(time.Now().UnixNano(), 10))
-	return md5Hash.Sum(nil)
+	sha256Hash := sha256.New()
+	_, _ = io.WriteString(sha256Hash, ip)
+	_, _ = io.WriteString(sha256Hash, strconv.FormatInt(time.Now().UnixNano(), 10))
+	return sha256Hash.Sum(nil)
 }
 
-func getUserIP(r *http.Request) string {
-	IPAddress := r.Header.Get("X-Real-Ip")
-	if IPAddress == "" {
-		IPAddress = r.Header.Get("X-Forwarded-For")
+func GetUserIP(r *http.Request) string {
+	ipAddress := r.Header.Get("X-Real-Ip")
+	if ipAddress == "" {
+		ipAddress = r.Header.Get("X-Forwarded-For")
 	}
-	if IPAddress == "" {
-		IPAddress = r.RemoteAddr
+	if ipAddress == "" {
+		ipAddress = r.RemoteAddr
 	}
-	return IPAddress
+	return ipAddress
 }

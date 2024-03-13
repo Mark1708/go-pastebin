@@ -2,13 +2,12 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS paste
 (
-    hash VARCHAR(6) NOT NULL PRIMARY KEY,
+    hash VARCHAR(8) NOT NULL PRIMARY KEY,
     title VARCHAR(50) NOT NULL,
-    author VARCHAR(100) NOT NULL,
-    content_path VARCHAR(200) NOT NULL,
+    visibility  VARCHAR(10),
     created_at TIMESTAMP NOT NULL,
     expired_at TIMESTAMP NOT NULL,
-    expiration VARCHAR(5) NOT NULL,
+    content TEXT NOT NULL,
     CONSTRAINT hash_unique UNIQUE (hash)
 );
 -- +goose StatementEnd

@@ -2,6 +2,4 @@ description: Not Found
 content:
   application/json:
     schema:
-      oneOf:
-        - $ref: '../schemas/error/error.yaml'
-        - $ref: '../schemas/error/errors.yaml'
+      $ref: '../schemas/error.yaml'
