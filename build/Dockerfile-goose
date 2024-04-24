@@ -1,0 +1,23 @@
+# Build environment
+# -----------------
+FROM ubuntu:22.04 AS builder
+RUN apt-get update && apt-get install -y git curl tar
+
+WORKDIR /build
+RUN curl -OL https://golang.org/dl/go1.22.2.linux-amd64.tar.gz
+RUN tar -C /usr/local -xzf go1.22.2.linux-amd64.tar.gz
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+RUN git clone https://github.com/pressly/goose.git ./goose-repo
+RUN cd ./goose-repo && go build -tags="no_mysql no_sqlite3 no_mssql no_redshift no_tidb no_clickhouse no_vertica no_ydb no_duckdb" -o ../goose ./cmd/goose
+RUN cd ../ && rm -rf goose-repo/
+
+COPY ../migrations ./migrations
+
+# Deployment environment
+# ----------------------
+FROM ubuntu:22.04
+
+WORKDIR /app
+COPY --from=builder /build/goose /app/goose
+COPY --from=builder /build/migrations /app/migrations

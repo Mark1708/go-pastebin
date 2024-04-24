@@ -1,0 +1,22 @@
+type: object
+properties:
+  id:
+    type: string
+    example: 'Sw4zOAOE'
+  title:
+    type: string
+  visibility:
+    type: object
+    properties:
+      type:
+        type: string
+      title:
+        type: string
+  content:
+    type: string
+  created_at:
+    type: string
+    format: date-time
+  expires_at:
+    type: string
+    format: date-time

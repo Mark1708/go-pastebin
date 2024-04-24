@@ -1,0 +1,21 @@
+type: object
+properties:
+  title:
+    example: Some Title
+    maxLength: 256
+    minLength: 1
+    type: string
+  visibility:
+    default: PUBLIC
+    type: string
+    enum: [ PUBLIC, PRIVATE, UNLISTED ]
+  content:
+    example: Some Content
+    maxLength: 2048
+    type: string
+  expires:
+    example: string
+    type: string
+required:
+  - content
+  - title

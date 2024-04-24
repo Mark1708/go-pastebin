@@ -1,0 +1,6 @@
+name: hash
+in: path
+description: Paste Hash
+required: true
+schema:
+  type: string
