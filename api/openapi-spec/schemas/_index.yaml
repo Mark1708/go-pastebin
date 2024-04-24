@@ -1,8 +1,0 @@
-RequestDTO:
-  $ref: "./paste/request-dto.yaml"
-ResponseDTO:
-  $ref: "./paste/response-dto.yaml"
-ErrResponseDto:
-  $ref: "./error.yaml"
-OperationResponseDto:
-  $ref: "./oper-resp-dto.yaml"
