@@ -1,0 +1,54 @@
+get:
+  tags:
+    - Pastes API
+  summary: Get paste
+  description: Get paste by ID
+  parameters:
+    - $ref: "../parameters/paste-id.yaml"
+  responses:
+    '200':
+      $ref: '../responses/paste/ok-response.yaml'
+    '400':
+      $ref: '../responses/bad-request-response.yaml'
+    '404':
+      $ref: '../responses/not-found-response.yaml'
+    '500':
+      $ref: '../responses/server-error-response.yaml'
+put:
+  tags:
+    - Pastes API
+  summary: Update paste
+  description: Update paste
+  parameters:
+    - $ref: "../parameters/paste-id.yaml"
+  requestBody:
+    description: Update Paste DTO
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/paste/request-dto.yaml'
+  responses:
+    '200':
+      $ref: '../responses/paste/ok-response.yaml'
+    '400':
+      $ref: '../responses/bad-request-response.yaml'
+    '404':
+      $ref: '../responses/not-found-response.yaml'
+    '500':
+      $ref: '../responses/server-error-response.yaml'
+delete:
+  tags:
+    - Pastes API
+  summary: Delete paste
+  description: Delete paste
+  parameters:
+    - $ref: "../parameters/paste-id.yaml"
+  responses:
+    '200':
+      $ref: '../responses/ok-response.yaml'
+    '400':
+      $ref: '../responses/bad-request-response.yaml'
+    '404':
+      $ref: '../responses/not-found-response.yaml'
+    '500':
+      $ref: '../responses/server-error-response.yaml'

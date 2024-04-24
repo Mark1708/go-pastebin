@@ -1,26 +1,29 @@
 package router
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/Mark1708/go-pastebin/internal/paste/handler"
-	"github.com/Mark1708/go-pastebin/internal/paste/repository"
-	"github.com/Mark1708/go-pastebin/internal/paste/service"
-
-	"github.com/jmoiron/sqlx"
-
-	"github.com/Mark1708/go-pastebin/internal/config"
-
-	"github.com/Mark1708/go-pastebin/internal/healthcheck"
+	hh "github.com/Mark1708/go-pastebin/internal/handler/healthcheck"
+	ph "github.com/Mark1708/go-pastebin/internal/handler/paste"
+	"github.com/Mark1708/go-pastebin/pkg/logger"
+	"github.com/Mark1708/go-pastebin/pkg/rest"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 )
 
-func New() *chi.Mux {
+const (
+	// CorsMaxAge Максимальное значение, не игнорируемое ни одним из основных браузеров.
+	CorsMaxAge = 300
+)
+
+func New(
+	pasteHandler ph.Handler,
+	healthHandler hh.Handler,
+
+) *chi.Mux {
 	r := chi.NewRouter()
 
 	// Настройка CORS
@@ -32,30 +35,18 @@ func New() *chi.Mux {
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
-		MaxAge:           config.CorsMaxAge,
+		MaxAge:           CorsMaxAge,
 	}))
 
-	// Создаём подключение
-	db, err := sqlx.Connect(
-		"pgx",
-		"postgresql://pb_user:pb_pass@db:5432/pastebin_db?sslmode=disable",
-	)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	r.Route("/api/v1", func(r chi.Router) {
+		rest.Get(r, "/health", healthHandler.CheckHealth)
 
-	r.Get(config.BasePath+"/healthcheck", healthcheck.Check)
-
-	r.Route(config.BasePath, func(r chi.Router) {
 		r.Route("/pastes", func(r chi.Router) {
-			pasteRepo := &repository.Repository{DB: db}
-			pasteService := &service.Service{Repo: *pasteRepo}
-			pasteAPI := &handler.API{Service: pasteService}
-			r.Post("/", pasteAPI.Create)
+			rest.Post(r, "/", pasteHandler.CreatePaste)
 			r.Route("/{hash}", func(r chi.Router) {
-				r.Get("/", pasteAPI.Get)
-				r.Put("/", pasteAPI.Update)
-				r.Delete("/", pasteAPI.Delete)
+				rest.Get(r, "/", pasteHandler.GetPaste)
+				rest.Put(r, "/", pasteHandler.UpdatePaste)
+				rest.Delete(r, "/", pasteHandler.DeletePaste)
 			})
 		})
 	})
@@ -63,15 +54,14 @@ func New() *chi.Mux {
 	workDir, _ := os.Getwd()
 
 	// Конфигурация Swagger
-	openAPIDir := http.Dir(filepath.Join(workDir, "api/openapi-spec/build"))
-	FileServer(r, config.BasePath+"/swagger", openAPIDir)
-
+	openAPIDir := http.Dir(filepath.Join(workDir, "api/openapi"))
+	FileServer(r, "/api/v1/swagger", openAPIDir)
 	return r
 }
 
 func FileServer(r chi.Router, path string, root http.FileSystem) {
 	if strings.ContainsAny(path, "{}*") {
-		panic("FileServer does not permit any URL parameters.")
+		logger.Log.Debug("FileServer does not permit any URL parameters.")
 	}
 
 	if path != "/" && path[len(path)-1] != '/' {

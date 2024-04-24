@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=builder /build/bin/pastebin /app/pastebin
 COPY --from=builder /build/bin/goose /app/goose
 COPY --from=builder /build/migrations /app/migrations
-COPY --from=builder /build/api/openapi-spec/build /app/api/openapi-spec/build
+COPY --from=builder /build/api/openapi/openapi.json /app/api/openapi/openapi.json
 
 CMD ["/app/pastebin"]
 EXPOSE 8080

@@ -1,36 +1,27 @@
 package main
 
 import (
-	"errors"
-	"fmt"
-	"log"
-	"net/http"
+	"context"
 
-	_ "github.com/jackc/pgx/v5/stdlib"
-
-	"github.com/Mark1708/go-pastebin/internal/router"
-
-	"github.com/Mark1708/go-pastebin/internal/config"
+	"github.com/Mark1708/go-pastebin/internal/app"
+	"github.com/Mark1708/go-pastebin/pkg/logger"
+	"go.uber.org/zap"
 )
 
+func init() {
+	logger.SetDefaultZapLogger()
+}
+
 func main() {
-	// Парсим конфигурацию
-	c := config.New()
+	ctx := context.Background()
 
-	// Инициализируем роутер
-	r := router.New()
-
-	s := &http.Server{
-		Addr:         fmt.Sprintf(":%d", c.Server.Port),
-		Handler:      r,
-		ReadTimeout:  c.Server.TimeoutRead,
-		WriteTimeout: c.Server.TimeoutWrite,
-		IdleTimeout:  c.Server.TimeoutIdle,
+	a, err := app.NewApp(ctx)
+	if err != nil {
+		logger.Log.With(zap.Error(err)).Fatal("failed to init app")
 	}
 
-	log.Println("Starting server " + s.Addr)
-	// Сервер определяет параметры для запуска HTTP-сервера.
-	if err := s.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Fatal("Server startup failed")
+	err = a.Run()
+	if err != nil {
+		logger.Log.With(zap.Error(err)).Fatal("failed to run app")
 	}
 }
